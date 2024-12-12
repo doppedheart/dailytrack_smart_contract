@@ -1,0 +1,8 @@
+{
+  "hardhat": {
+    "ERC721Mock": "0x5FbDB2315678afecb367f032d93F642f64180aa3"
+  },
+  "sepolia": {
+    "ERC721Mock": "0xCDb13baF3f955c75337Ab59C389a35b8eD4fE478"
+  }
+}

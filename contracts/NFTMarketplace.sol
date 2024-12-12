@@ -38,6 +38,10 @@ contract NFTMarketplace is Ownable, ReentrancyGuard {
 
     event ListingCancelled(uint indexed listingId);
 
+    event PlatformFeeUpdated(uint indexed platformfee);
+
+    event FeeWithdrawn(uint indexed balance);
+
     constructor(address _paymentTokenAddress) Ownable(msg.sender) {
         paymentToken = IERC20(_paymentTokenAddress);
     }
@@ -83,7 +87,7 @@ contract NFTMarketplace is Ownable, ReentrancyGuard {
 
         require(
             paymentToken.transferFrom(msg.sender, address(this), platformFee),
-            "Platform fee transfer failded"
+            "Platform fee transfer failed"
         );
         require(
             paymentToken.transferFrom(
@@ -91,7 +95,7 @@ contract NFTMarketplace is Ownable, ReentrancyGuard {
                 listing.seller,
                 sellerproceeds
             ),
-            "Seller payment transfer failded"
+            "Seller payment transfer failed"
         );
 
         IERC721(listing.nftContract).transferFrom(
@@ -123,6 +127,7 @@ contract NFTMarketplace is Ownable, ReentrancyGuard {
     function updatePlatformFee(uint256 _newFeePercent) external onlyOwner {
         require(_newFeePercent <= 1000, "Fee cannot exceed 10%");
         platformFeePercent = _newFeePercent;
+        emit PlatformFeeUpdated(_newFeePercent);
     }
 
     function withdrawToken() external onlyOwner {
@@ -133,5 +138,19 @@ contract NFTMarketplace is Ownable, ReentrancyGuard {
             paymentToken.transfer(owner(), balance),
             "Fee Withrawal failed"
         );
+
+        emit FeeWithdrawn(balance);
     }
+
+    // function getTokenURI(
+    //     uint256 _listingId
+    // ) external view returns (string memory) {
+    //     Listing storage listing = listings[_listingId];
+    //     require(listing.isActive, "Listing is not active");
+
+    //     IERC721 nftContract = IERC721(listing.nftContract);
+    //     string memory tokenURI = nftContract.tokenURI(listing.tokenId);
+
+    //     return tokenURI;
+    // }
 }
